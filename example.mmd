@@ -1,0 +1,26 @@
+%% Use the “C4 with Mermaid” VS Code extension to preview this diagram.
+C4Container
+    title C2: Managed Web Application Platform
+    Person(customer, "Customer", "Uses the product through a web browser.")
+    Person(admin, "Admin/DevOps", "Configures deployments and monitors releases.")
+
+    System_Boundary(product, "Product Delivery Platform") {
+        Container(web, "Web Frontend", "TypeScript / SPA", "Runs in a managed cloud web hosting service (e.g., Azure Static Web Apps, AWS Amplify).")
+        Container(api, "Backend Services", "Cloud-hosted microservices", "Serve business APIs, orchestrate workflows, and expose admin endpoints.")
+        ContainerDb(db, "Managed NoSQL Database", "NoSQL (e.g., DynamoDB, Cosmos DB)", "Stores user data, configuration, and operational records.")
+    }
+
+    System_Ext(repo, "Source Control Repository", "Git-based platform", "Holds source code and IaC artifacts.")
+    System_Ext(ciam, "Corporate Identity Provider (CIAM)", "OAuth/OIDC/SAML", "Authenticates users and issues tokens.")
+    System_Ext(pipeline, "Internal Deployment Pipelines", "CI/CD tooling", "Builds artifacts and deploys them to managed services.")
+
+    Rel(customer, web, "Uses via browser over HTTPS")
+    Rel(web, api, "Calls REST/GraphQL APIs", "HTTPS + JWT")
+    Rel(api, db, "Reads/Writes", "Managed NoSQL SDK")
+    Rel(web, ciam, "Redirects to for login, receives tokens", "OIDC/OAuth2")
+    Rel(api, ciam, "Validates tokens", "JWT introspection")
+    Rel(admin, pipeline, "Configures deployment policies, triggers releases")
+    Rel(pipeline, repo, "Fetches source code")
+    Rel(pipeline, web, "Deploys frontend artifacts")
+    Rel(pipeline, api, "Deploys backend services")
+    Rel(pipeline, db, "Applies schema/data migrations")
